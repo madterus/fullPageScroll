@@ -1,0 +1,24 @@
+{
+    "name": "@username/fullpagescroll",
+    "title": "jQuery Full Page Scroll",
+    "description": "Lightweight, cross-browser jQuery full page scroll.",
+    "keywords": [
+      "jquery-plugins",
+      "fullpagescroll",
+      "scroll"
+    ],
+    "version": "0.8.0",
+    "author": {
+      "name": "Tomáš Surovčík"
+    },
+    "license": [
+      {
+        "type": "MIT",
+        "url": "http://www.opensource.org/licenses/mit-license.php"
+      }
+    ],
+    "dependencies": {
+      "jquery": ">=1.8",
+      "jquery.scrollTo" : "2.1.2"
+    }
+  }
