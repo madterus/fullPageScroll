@@ -1,24 +1,29 @@
 {
-    "name": "@username/fullpagescroll",
-    "title": "jQuery Full Page Scroll",
-    "description": "Lightweight, cross-browser jQuery full page scroll.",
-    "keywords": [
-      "jquery-plugins",
-      "fullpagescroll",
-      "scroll"
-    ],
-    "version": "0.8.0",
-    "author": {
-      "name": "Tomáš Surovčík"
-    },
-    "license": [
-      {
-        "type": "MIT",
-        "url": "http://www.opensource.org/licenses/mit-license.php"
-      }
-    ],
-    "dependencies": {
-      "jquery": ">=1.8",
-      "jquery.scrollTo" : "2.1.2"
-    }
-  }
+  "name": "@madter/fullpagescroll",
+  "title": "jQuery Full Page Scroll",
+  "description": "Lightweight, cross-browser jQuery full page scroll.",
+  "keywords": [
+    "jquery-plugins",
+    "fullpagescroll",
+    "scroll"
+  ],
+  "version": "0.8.1",
+  "author": "Tomáš Surovčík",
+  "license": "MIT",
+  "dependencies": {
+    "jquery": ">=1.8",
+    "jquery.scrollTo": "2.1.2"
+  },
+  "main": "Gruntfile.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/madterus/fullPageScroll.git"
+  },
+  "bugs": {
+    "url": "https://github.com/madterus/fullPageScroll/issues"
+  },
+  "homepage": "https://github.com/madterus/fullPageScroll#readme"
+}
