@@ -9,27 +9,33 @@ The plugin requires jQuery 1.8 or higher.
 
 Via [npm](https://www.npmjs.com/package/jquery.scrollto):
 ```bash
-npm install jquery.scrollto
+npm install @madter/fullpagescroll
 ```
 
 ### Downloading Manually
 
 If you want the latest stable version, get the latest release from the [releases page](https://github.com/madterus/fullPageScroll/releases).
 
-## 0.8.2
+## 0.9.0
 
-Version 0.8.2 has been release.
+Version 0.9.0 has been release.
 Still under development.
 If you have problem then go ahead and [report the issue](https://github.com/madterus/fullPageScroll/issues/new).
+
+## What is new
+
+Extended options.
+You dont need to have so strict html.
+Navigation.
 
 ## Usage
 ```html
 <div id="fullPageScroll">
-    <section class="fp-block" data-nicehash="first"> // have scrollClass
+    <section class="fp-block" data-fphash="first"> // have scrollClass
         // content
     </section>
     <section class="fp-block">
-        <div class="fp-noscroll" data-nicehash="second"> // have noScrollClass
+        <div class="fp-noscroll" data-fphash="second"> // have noScrollClass
             // content with own scroll
         </div>
         // more content
@@ -38,7 +44,7 @@ If you have problem then go ahead and [report the issue](https://github.com/madt
 ```
 
 ```js
-$(element).fullpagescroll([settings]);
+$('#fullPageScroll').fullPage([settings]);
 ```
 
 ### _element_
@@ -53,7 +59,7 @@ Each element that should be scrolled must have this class.
 
 Element that should have its own scroll (overflow).
 
-### _data-nicehash_
+### _data-fphash_
 
 Each element with _scrollClass_ must have data attribute that determine hash in url.
 
@@ -65,7 +71,13 @@ These are the supported settings:
  * __noScrollClass__: Class of a element that can scroll itself (overflow). Default is `.fp-noscroll`
  * __breakpoint__: On what size of window (width) you want deactivate full page scroll. Default is `991`
  * __nav__: If you want display bullets navigation. Default is `true`
+ * __scrollOffset__: Offset of scroll. Default is `0`
+ * __scrollEasing__: Easing of animation. Default is `swing`
+ * __scrollDuration__: Scroll duration. Default is `500`
  * __resizeCheck__: If you want to have check for resize window to determine if you reach breakpoint. Default is `true`
+ * __changeUrl__: If you hwish change url (you must have data atribut on __scrollClass__ element). Default is `true`
+ * __changeDataName__: Data name for hash on __scrollClass__ element. Default is `fphash`
+ * __scrollOnLoad__: If you whish to scroll on load. Default is `true`
 
 
 ### Changing the default settings

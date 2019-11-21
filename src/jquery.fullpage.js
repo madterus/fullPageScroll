@@ -29,34 +29,27 @@
 	$fullPage.defaults = {
         scrollClass: '.fp-block',
         noScrollClass: '.fp-noscroll',
-        scrollOffset: 0,
+        currentClass: '.fp-current',
         breakpoint: '991',
         nav: true,
-        navBullets: {
-            position: 'right',
-            color: 'white',
-            activeColor: '',
-            border: '',
-            image: false
-        },
-        scroll: {
-            animation: '',
-            duration: ''
-        },
+        scrollOffset: 0,
+        scrollEasing: 'swing',
+        scrollDuration: 500,
         resizeCheck: true,
-        changeUrl: {
-            change: true,
-            dataName: 'fphash',
-            scrollOnLoad: true
-        }
-        
+        changeUrl: true,
+        changeDataName: 'fphash',
+        scrollOnLoad: true
 	};	
 
 	$.fn.fullPage = function(settings) {
         settings = $.extend({}, $fullPage.defaults, settings);
+
+        var parrentElement = this;
         
+        initBlocks(parrentElement);
+
         if (settings.nav) {
-            createNav(this);
+            createNav(parrentElement);
         }
 
         if ($(window).width() > settings.breakpoint) {
@@ -71,57 +64,72 @@
     
             var timeout;
     
-            if (window.location.hash == '') {
-                setFirstBlock();
-            } else {
-                var currentBlock = $(settings.scrollClass + "[data-nicehash='" + window.location.hash.substring(1) +"']");
-                if (currentBlock.length > 0) {
-                    setNavActive(window.location.hash.substring(1));
-                    scrollTo(currentBlock);
-                } else {
+            if ( settings.changeUrl) {
+                if (window.location.hash == '') {
                     setFirstBlock();
+                } else {
+                    var currentBlock = $(settings.scrollClass + "[data-" + settings.changeDataName + "='" + window.location.hash.substring(1) +"']");
+                    if (currentBlock.length > 0) {
+                        setNavActive(window.location.hash.substring(1));
+                        scrollTo(currentBlock);
+                    } else {
+                        setFirstBlock();
+                    }
                 }
+            } else {
+                setFirstBlock();
             }
     
             handleScroll();
         }
 
-        function setFirstBlock() {
-            window.location.hash = $(settings.scrollClass).first().data('nicehash');
-            setNavActive();
+        // ----- BLOCKS start -----
+        function initBlocks(parrentElement) {
+            var blocks = $( parrentElement ).children();
+            
+            blocks.each(function(){
+                if (!$(this).hasClass(settings.scrollClass.substring(1))) {
+                    $(this).addClass(settings.scrollClass.substring(1));
+                }
+            });
         }
 
+        function setFirstBlock() {
+            if ( settings.changeUrl) {
+                window.location.hash = $(settings.scrollClass).first().data(settings.changeDataName);
+            }
+
+            $(settings.scrollClass).first().addClass(settings.currentClass.substring(1));
+
+            if (settings.scrollOnLoad) {
+                scrollTo($(settings.scrollClass).first());
+            }
+
+            if (settings.nav) {
+                setNavActive();
+            }
+        }
+
+        function setCurrentBlock(block) {
+            $(settings.currentClass).removeClass(settings.currentClass.substring(1));
+            block.addClass(settings.currentClass.substring(1));
+        }
+        // ----- BLOCKS end -----
+
+        // ----- SCROLL start -----
         function scrollTo(block) {
             if (block.length > 0) {
-                $.scrollTo(block, 500);
-                window.location.hash = block.data('nicehash');
+                setCurrentBlock(block);
+                $.scrollTo(block, settings.scrollDuration, {
+                    offset: settings.scrollOffset,
+                    easing: settings.scrollEasing
+                });
+
+                if ( settings.changeUrl) {
+                    window.location.hash = block.data(settings.changeDataName);
+                }
             }
         };
-    
-        $('.fp-nav-item').on('click', function(){
-            var href = $(this).data('href');
-            var block = $(settings.scrollClass + "[data-nicehash='" + href + "']");
-            scrollTo(block);
-            $('.fp-nav-item').removeClass('active');
-            $(this).addClass('active');
-        });
-    
-        window.onresize = function() {
-            if (window.innerHeight <= 991) {
-                destroyScroll();
-            } else {
-                handleScroll();
-            }
-        }
-    
-        function setNavActive(hash = false) {
-            $('.fp-nav-item').removeClass('active');
-            if (!hash) {
-                $('.fp-nav-item').first().addClass('active');
-            } else {
-                $(".fp-nav-item[data-href='" + hash + "']").addClass('active');
-            }
-        }
     
         function destroyScroll() {
             $(document).unbind('DOMMouseScroll mousewheel');
@@ -130,37 +138,80 @@
         function handleScroll() {
             $(document).on('DOMMouseScroll mousewheel', function(event)
             {
-                var hash = window.location.hash;
-                var currentBlock = $(settings.scrollClass + "[data-nicehash='" + hash.substring(1) +"']");
+                var currentBlock = $(settings.currentClass);
     
                 timeout = setTimeout(function()
                 {
                     if (event.originalEvent.detail > 0 || event.originalEvent.wheelDelta < 0) {
                         var newBlock = currentBlock.next(settings.scrollClass);
                         scrollTo(newBlock);
-                        setNavActive(newBlock.data('nicehash'));
+
+                        if (settings.nav) {
+                            setNavActive(newBlock.index() + 1);
+                        }
                     } else {
                         //up
                         var newBlock = currentBlock.prev(settings.scrollClass);
                         scrollTo(newBlock);
-                        setNavActive(newBlock.data('nicehash'));
+
+                        if (settings.nav) {
+                            setNavActive(newBlock.index() + 1);
+                        }
                     }
     
                     return false;
                 }, 25);
             });
         };
+        // ----- SCROLL end -----
 
-        function createNav(element) {
+        // ----- RESIZE start ----
+        if (settings.resizeCheck) {
+            window.onresize = function() {
+                if (window.innerHeight <= settings.breakpoint) {
+                    destroyScroll();
+                } else {
+                    handleScroll();
+                }
+            }
+        }
+        // ----- RESIZE end ----
+
+        // ----- NAVIGATION start -----
+        if (settings.nav) {
+            $('.fp-nav-item').on('click', function(){
+                var target = $(this).data('target');
+                var test = $("#" + parrentElement.attr('id') + " " + settings.scrollClass + ":nth-child(" + target + ")");
+
+                scrollTo(test);
+
+                $('.fp-nav-item').removeClass('active');
+                $(this).addClass('active');
+            });
+        }
+
+        function setNavActive(number = false) {
+            $('.fp-nav-item').removeClass('active');
+            if (!number) {
+                $('.fp-nav-item').first().addClass('active');
+            } else {
+                $(".fp-nav-item[data-target='" + number + "']").addClass('active');
+            }
+        }
+
+        function createNav(parrentElement) {
             var items = $(settings.scrollClass);
             var navHtml = '<div class="fp-nav"><ul>';
+            var count = 1;
             
             items.each(function(){
-                navHtml += '<li class="fp-nav-item" data-href="' + $(this).data('nicehash') + '"></li>';
+                navHtml += '<li class="fp-nav-item" data-target="' + count + '"></li>';
+                count++;
             });
             
-            element.append(navHtml);
+            parrentElement.append(navHtml);
         }
+        // ----- NAVIGATION end -----
 	};
 
 	// AMD requirement

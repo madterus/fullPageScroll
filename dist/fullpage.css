@@ -1,0 +1,27 @@
+.fp-nav {
+    position: fixed;
+    right: 0;
+    top: 50vh;
+    z-index: 9999;
+}
+
+.fp-nav ul {
+    margin: 0 15px 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.fp-nav ul li {
+    width: 15px;
+    height: 15px;
+    margin-bottom: 10px;
+    border: 1px solid black;
+    border-radius: 50%;
+    background-color:black;
+    cursor: pointer;
+}
+
+.fp-nav ul li.active,
+.fp-nav ul li:hover {
+    background-color: rgba(0,0,0,0.4);
+}
