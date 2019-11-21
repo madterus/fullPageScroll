@@ -16,9 +16,9 @@ npm install @madter/fullpagescroll
 
 If you want the latest stable version, get the latest release from the [releases page](https://github.com/madterus/fullPageScroll/releases).
 
-## 0.9.0
+## 0.9.1
 
-Version 0.9.0 has been release.
+Version 0.9.1 has been release.
 Still under development.
 If you have problem then go ahead and [report the issue](https://github.com/madterus/fullPageScroll/issues/new).
 
