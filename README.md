@@ -16,14 +16,19 @@ npm install @madter/fullpagescroll
 
 If you want the latest stable version, get the latest release from the [releases page](https://github.com/madterus/fullPageScroll/releases).
 
-## 0.9.1
+## 0.9.2
 
-Version 0.9.1 has been release.
+Version 0.9.2 has been release.
 Still under development.
 If you have problem then go ahead and [report the issue](https://github.com/madterus/fullPageScroll/issues/new).
 
 ## What is new
 
+### 0.9.2  
+Support arrows for navigation.  
+Fix scrolling on touchpads.
+
+### 0.9.1  
 Extended options.
 You dont need to have so strict html.
 Navigation.

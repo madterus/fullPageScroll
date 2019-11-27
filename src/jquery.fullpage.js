@@ -5,7 +5,7 @@
  * http://tomas.surovcik.cz/jQuery/fullPage.html
  * @projectDescription Lightweight, cross-browser jQuery full page scroll.
  * @author Tomáš Surovčík
- * @version 0.5.0
+ * @version 0.9.2
  */
 ;(function(factory) {
 	'use strict';
@@ -32,6 +32,8 @@
         currentClass: '.fp-current',
         breakpoint: '991',
         nav: true,
+        navTitle: true,
+        navTitleDataName: 'fptitle',
         scrollOffset: 0,
         scrollEasing: 'swing',
         scrollDuration: 500,
@@ -56,10 +58,10 @@
 
             $( settings.noScrollClass )
                 .mouseover(function() {
-                    destroyScroll();
+                    destroyScroll(parrentElement);
                 })
                 .mouseout(function() {
-                    handleScroll();
+                    initEvents(parrentElement);
                 });
     
             var timeout;
@@ -80,7 +82,7 @@
                 setFirstBlock();
             }
     
-            handleScroll();
+            initEvents(parrentElement);
         }
 
         // ----- BLOCKS start -----
@@ -92,6 +94,9 @@
                     $(this).addClass(settings.scrollClass.substring(1));
                 }
             });
+
+            $(settings.scrollClass).first().addClass('fp-first');
+            $(settings.scrollClass).last().addClass('fp-last');
         }
 
         function setFirstBlock() {
@@ -119,11 +124,12 @@
         // ----- SCROLL start -----
         function scrollTo(block) {
             if (block.length > 0) {
-                setCurrentBlock(block);
+                
                 $.scrollTo(block, settings.scrollDuration, {
-                    offset: settings.scrollOffset,
-                    easing: settings.scrollEasing
-                });
+                        offset: settings.scrollOffset,
+                        easing: settings.scrollEasing
+                    }
+                );
 
                 if ( settings.changeUrl) {
                     window.location.hash = block.data(settings.changeDataName);
@@ -131,38 +137,111 @@
             }
         };
     
-        function destroyScroll() {
-            $(document).unbind('DOMMouseScroll mousewheel');
+        function destroyScroll(parrentElement) {
+            $(parrentElement).unbind('DOMMouseScroll mousewheel touch touchmove', scrollHandle, false);
+            $(document).unbind('keydown', keyHandle, false);
         };
-    
-        function handleScroll() {
-            $(document).on('DOMMouseScroll mousewheel', function(event)
-            {
-                var currentBlock = $(settings.currentClass);
-    
-                timeout = setTimeout(function()
-                {
-                    if (event.originalEvent.detail > 0 || event.originalEvent.wheelDelta < 0) {
-                        var newBlock = currentBlock.next(settings.scrollClass);
-                        scrollTo(newBlock);
 
-                        if (settings.nav) {
-                            setNavActive(newBlock.index() + 1);
-                        }
-                    } else {
-                        //up
-                        var newBlock = currentBlock.prev(settings.scrollClass);
-                        scrollTo(newBlock);
+        function initEvents(parrentElement) {
+            $(document).on('keydown', keyHandle);
+            $(parrentElement).on('DOMMouseScroll mousewheel touch touchmove', scrollHandle);
+        }
 
-                        if (settings.nav) {
-                            setNavActive(newBlock.index() + 1);
-                        }
-                    }
-    
-                    return false;
-                }, 25);
-            });
+        function keyHandle(evt) {
+            var currentBlock = $(settings.currentClass);
+
+            if (evt.which == 40) {
+                evt.preventDefault();
+                scrollDown(currentBlock);
+            } else if (evt.which == 38) {
+                evt.preventDefault();
+                scrollTop(currentBlock);
+            }
+        }
+        
+        var scrolling = false;
+
+        function scrollHandle(event) {
+            
+            event.preventDefault();
+
+            var currentBlock = $(settings.currentClass);
+
+            if (event.originalEvent.detail > 0 || event.originalEvent.wheelDelta < 0) {
+                if (!scrolling) {
+                    scrolling = true;
+                    scrollDown(currentBlock);
+                    window.setTimeout(() => { scrolling = false; }, 800)
+                } else {
+                    
+                }
+            } else {
+                //up
+                if (!scrolling) {
+                    scrolling = true;
+                    scrollTop(currentBlock);
+                    window.setTimeout(() => { scrolling = false; }, 800)
+                } else {
+                    
+                }
+            }
+
+            return false;
+
         };
+
+        
+        function scrollDown(currentBlock) {
+            // if(animating){
+            
+            //     return false;
+            // }
+            // animating = true;
+            if (!currentBlock.hasClass('fp-last')) {
+                var newBlock = currentBlock.next(settings.scrollClass);
+                scrollTo(newBlock);
+                
+                if (settings.nav) {
+                    
+                    setNavActive(newBlock.index() + 1);
+                }
+                setCurrentBlock(newBlock);
+                // timeout = setTimeout(function()
+                // {
+                //     animating = false;
+                
+
+                // }, 250);
+            } else {
+                // animating = false;
+            }
+        }
+
+        function scrollTop(currentBlock) {
+            // if(animating){
+            
+            //     return false;
+            // }
+            // animating = true;
+            if (!currentBlock.hasClass('fp-first')) {
+                var newBlock = currentBlock.prev(settings.scrollClass);
+                scrollTo(newBlock);
+                
+                if (settings.nav) {
+                    
+                    setNavActive(newBlock.index() + 1);
+                }
+                setCurrentBlock(newBlock);
+                // timeout = setTimeout(function()
+                // {
+                //     animating = false;
+                
+
+                // }, 250);
+            } else {
+                // animating = false;
+            }
+        }
         // ----- SCROLL end -----
 
         // ----- RESIZE start ----
@@ -205,13 +284,22 @@
             var count = 1;
             
             items.each(function(){
-                navHtml += '<li class="fp-nav-item" data-target="' + count + '"></li>';
+                if (settings.navTitle) {
+                    var dataTitle = $(this).data(settings.navTitleDataName);
+                }
+                navHtml += '<li class="fp-nav-item" data-target="' + count + '">';
+                if (dataTitle && settings.navTitle) {
+                    navHtml += '<div class="fp-nav-title">' + dataTitle + '</div>';
+                }
+                navHtml += '<div class="fp-nav-circle"></div></li>';
                 count++;
             });
             
             parrentElement.append(navHtml);
         }
         // ----- NAVIGATION end -----
+
+        
 	};
 
 	// AMD requirement
